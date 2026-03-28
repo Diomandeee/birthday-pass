@@ -1,0 +1,61 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.com.placeholder",
+  "serialNumber": "birthday-2026-04-06",
+  "teamIdentifier": "PLACEHOLDER",
+  "organizationName": "Mohamed Diomande",
+  "description": "Mohamed's Birthday — April 6",
+  "backgroundColor": "rgb(8, 8, 18)",
+  "foregroundColor": "rgb(255, 210, 70)",
+  "labelColor": "rgb(155, 155, 175)",
+  "logoText": "Birthday Pass",
+  "eventTicket": {
+    "headerFields": [
+      {
+        "key": "year",
+        "label": "YEAR",
+        "value": "2026"
+      }
+    ],
+    "primaryFields": [
+      {
+        "key": "name",
+        "label": "",
+        "value": "Mohamed's Birthday"
+      }
+    ],
+    "secondaryFields": [
+      {
+        "key": "date",
+        "label": "DATE",
+        "value": "Sunday, April 6"
+      },
+      {
+        "key": "type",
+        "label": "EVENT",
+        "value": "Birthday"
+      }
+    ],
+    "auxiliaryFields": [
+      {
+        "key": "status",
+        "label": "",
+        "value": "Mark your calendar — April 6!",
+        "changeMessage": "%@"
+      }
+    ],
+    "backFields": [
+      {
+        "key": "message",
+        "label": "From Mohamed",
+        "value": "Hey! Save this to your Wallet. You'll get a notification on April 6 — come wish me happy birthday!"
+      },
+      {
+        "key": "ig",
+        "label": "Instagram",
+        "value": "@mohameddiomande",
+        "attributedValue": "<a href='https://instagram.com/mohameddiomande'>@mohameddiomande</a>"
+      }
+    ]
+  }
+}

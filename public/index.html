@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mohamed's Birthday 🎂</title>
+
+  <!-- Social preview -->
+  <meta property="og:title" content="Mohamed's Birthday — April 6">
+  <meta property="og:description" content="Save this to your Wallet. You'll get a reminder on April 6. 🎂">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #ffd246;
+      --gold-dim: rgba(255, 210, 70, 0.15);
+      --bg: #08080f;
+      --text-dim: #9999bb;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 40px);
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glow */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -5%, rgba(255, 185, 30, 0.14) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 30% at 85% 90%, rgba(255, 80, 130, 0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 32px 20px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* ── Video ─────────────────────────────────────────────────── */
+    .video-wrap {
+      width: 100%;
+      max-width: 300px;
+      aspect-ratio: 9 / 16;
+      border-radius: 22px;
+      overflow: hidden;
+      position: relative;
+      background: #111;
+      margin-bottom: 32px;
+      box-shadow: 0 0 0 1px rgba(255,210,70,0.15), 0 24px 60px rgba(0,0,0,0.6);
+    }
+
+    .video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .unmute-btn {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50px;
+      color: #fff;
+      font-size: 13px;
+      padding: 6px 12px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: opacity 0.2s;
+    }
+
+    .unmute-btn:active { opacity: 0.7; }
+
+    /* ── Text ──────────────────────────────────────────────────── */
+    .emoji {
+      font-size: 52px;
+      margin-bottom: 16px;
+      display: block;
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-7px); }
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 6px;
+      line-height: 1.15;
+    }
+
+    .date-line {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 36px;
+    }
+
+    /* ── Wallet button ─────────────────────────────────────────── */
+    .wallet-link {
+      display: block;
+      margin-bottom: 14px;
+      transition: transform 0.15s ease;
+    }
+    .wallet-link:active { transform: scale(0.97); }
+    .wallet-link img { height: 54px; display: block; }
+
+    .hint {
+      font-size: 12px;
+      color: #555570;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* ── Desktop warning ───────────────────────────────────────── */
+    .desktop-warn {
+      display: none;
+      background: var(--gold-dim);
+      border: 1px solid rgba(255, 210, 70, 0.25);
+      border-radius: 14px;
+      padding: 16px 18px;
+      font-size: 14px;
+      color: var(--gold);
+      line-height: 1.6;
+      text-align: center;
+      margin-bottom: 16px;
+      max-width: 320px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="container">
+
+    <!-- Video (shown only when VIDEO_URL is set) -->
+    <div class="video-wrap" id="videoWrap" style="display:none">
+      <video id="vid" autoplay muted loop playsinline></video>
+      <button class="unmute-btn" id="unmuteBtn" onclick="toggleMute()">🔇 Tap for sound</button>
+    </div>
+
+    <span class="emoji" id="floatEmoji">🎂</span>
+    <h1>Mohamed's Birthday</h1>
+    <p class="date-line">Sunday · April 6, 2026</p>
+
+    <div class="desktop-warn" id="desktopWarn">
+      Open this on your iPhone to add it to Apple Wallet.
+    </div>
+
+    <a href="/passes/pass.pkpass" class="wallet-link" id="walletLink">
+      <img
+        src="https://developer.apple.com/wallet/add-to-apple-wallet-US-UK.svg"
+        alt="Add to Apple Wallet"
+      >
+    </a>
+
+    <p class="hint">Open on your iPhone · you'll get a reminder April 6</p>
+  </div>
+
+  <script>
+    const VIDEO_URL = '__VIDEO_URL__';
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+    // Inject video if URL is set
+    if (VIDEO_URL) {
+      const wrap = document.getElementById('videoWrap');
+      const vid = document.getElementById('vid');
+      vid.src = VIDEO_URL;
+      wrap.style.display = 'block';
+      // Hide the floating emoji when video is shown
+      document.getElementById('floatEmoji').style.display = 'none';
+    }
+
+    // Desktop: show warning, hide wallet button
+    if (!isIOS) {
+      document.getElementById('desktopWarn').style.display = 'block';
+      document.getElementById('walletLink').style.display = 'none';
+    }
+
+    function toggleMute() {
+      const vid = document.getElementById('vid');
+      const btn = document.getElementById('unmuteBtn');
+      vid.muted = !vid.muted;
+      btn.textContent = vid.muted ? '🔇 Tap for sound' : '🔊 Muted';
+    }
+  </script>
+</body>
+</html>
