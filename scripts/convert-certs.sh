@@ -1,56 +1,57 @@
 #!/bin/bash
-# Run from the birthday-pass/ root directory
-# Usage: ./scripts/convert-certs.sh path/to/pass.p12
+# Run from birthday-pass/ root after downloading the .cer from Apple Developer
+# Usage: ./scripts/convert-certs.sh ~/Downloads/pass.cer
+#
+# The private key was already generated at certs/private.key
+# You only need to upload certs/request.certSigningRequest to Apple and download the .cer
 
 set -e
 
-P12=$1
-if [ -z "$P12" ]; then
-  echo "Usage: $0 path/to/pass.p12"
+CER=$1
+if [ -z "$CER" ]; then
+  echo "Usage: $0 ~/Downloads/pass.cer"
   exit 1
 fi
 
-echo "Enter the passphrase you used when exporting from Keychain:"
-read -s PASSPHRASE
-echo ""
+echo "Converting certificate..."
 
-mkdir -p certs
+# Convert Apple's .cer to PEM (signerCert)
+openssl x509 -inform DER -outform PEM -in "$CER" -out certs/signerCert.pem
 
-# Extract signer cert
-openssl pkcs12 -in "$P12" -clcerts -nokeys -out certs/signerCert.pem \
-  -passin "pass:$PASSPHRASE" -legacy 2>/dev/null || \
-openssl pkcs12 -in "$P12" -clcerts -nokeys -out certs/signerCert.pem \
-  -passin "pass:$PASSPHRASE"
+# The signerKey.pem is already at certs/private.key — just copy it
+cp certs/private.key certs/signerKey.pem
 
-# Extract signer key (no passphrase on output — stored in .env)
-openssl pkcs12 -in "$P12" -nocerts -nodes -out certs/signerKey.pem \
-  -passin "pass:$PASSPHRASE" -legacy 2>/dev/null || \
-openssl pkcs12 -in "$P12" -nocerts -nodes -out certs/signerKey.pem \
-  -passin "pass:$PASSPHRASE"
-
-# Download Apple WWDR G4 cert
-echo "Downloading Apple WWDR G4 certificate..."
+# Download Apple WWDR G4 certificate
+echo "Downloading Apple WWDR G4..."
 curl -s "https://www.apple.com/certificateauthority/AppleWWDRCAG4.cer" -o certs/AppleWWDRCAG4.cer
 openssl x509 -inform DER -outform PEM -in certs/AppleWWDRCAG4.cer -out certs/wwdr.pem
 
 echo ""
-echo "PEM files written to certs/  ✓"
+echo "Certificates ready ✓"
 echo ""
-echo "═══════════════════════════════════════════════════════"
-echo "  Copy these into your Vercel environment variables:"
-echo "═══════════════════════════════════════════════════════"
+echo "═══════════════════════════════════════════════════"
+echo "  Run these commands to add to Vercel:"
+echo "═══════════════════════════════════════════════════"
 echo ""
-echo "SIGNER_CERT="
-base64 -i certs/signerCert.pem | tr -d '\n'
+echo "cd $(pwd)"
 echo ""
+
+SIGNER_CERT_B64=$(base64 -i certs/signerCert.pem | tr -d '\n')
+SIGNER_KEY_B64=$(base64 -i certs/signerKey.pem | tr -d '\n')
+WWDR_B64=$(base64 -i certs/wwdr.pem | tr -d '\n')
+
+echo "vercel env add SIGNER_CERT production << 'EOF'"
+echo "$SIGNER_CERT_B64"
+echo "EOF"
 echo ""
-echo "SIGNER_KEY="
-base64 -i certs/signerKey.pem | tr -d '\n'
+echo "vercel env add SIGNER_KEY production << 'EOF'"
+echo "$SIGNER_KEY_B64"
+echo "EOF"
 echo ""
+echo "vercel env add WWDR_CERT production << 'EOF'"
+echo "$WWDR_B64"
+echo "EOF"
 echo ""
-echo "WWDR_CERT="
-base64 -i certs/wwdr.pem | tr -d '\n'
+echo "vercel --prod"
 echo ""
-echo ""
-echo "CERT_PASSPHRASE= (leave blank — key has no passphrase)"
-echo ""
+echo "Then share: https://birthday-pass.vercel.app"
